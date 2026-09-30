@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --gutter: 24px;
+    color-scheme: light;
+  }
+  @media (min-width: 640px) {
+    :root { --gutter: 40px; }
+  }
+  @media (min-width: 1024px) {
+    :root { --gutter: 64px; }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 96px;
+  }
+  body {
+    @apply bg-paper font-sans text-body text-espresso antialiased;
+    overflow-x: hidden;
+  }
+  ::selection {
+    @apply bg-clay text-paper;
+  }
+  h1, h2, h3 {
+    @apply font-display font-medium;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.clay');
+    outline-offset: 3px;
+  }
+  .on-dark :focus-visible {
+    outline-color: theme('colors.paper');
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site;
+    padding-inline: var(--gutter);
+  }
+  .eyebrow {
+    @apply font-sans text-eyebrow font-medium uppercase text-taupe;
+  }
+  .hairline {
+    @apply border-stone;
+  }
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible,
+  .link-underline[aria-current='page'] {
+    background-size: 100% 1px;
+  }
+
+  /* Scroll-reveal: content is visible by default; only hidden once JS confirms it can reveal it. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 640ms cubic-bezier(0.16, 1, 0.3, 1), transform 640ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js [data-reveal][data-inview] {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js [data-reveal] { opacity: 1; transform: none; }
+  }
+
+  /* Product card actions: always visible on touch, revealed on hover/focus where hover exists. */
+  @media (hover: hover) and (min-width: 1024px) {
+    .card-actions {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 280ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .group:hover .card-actions,
+    .group:focus-within .card-actions {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+/* ───── Brand moment: "The passing of a gift" ───── */
+@keyframes vl-travel-x {
+  0%, 62% { transform: translateX(0); }
+  86%, 100% { transform: translateX(var(--travel, 360px)); }
+}
+@keyframes vl-travel-y {
+  0%, 62% { transform: translateY(0); }
+  74% { transform: translateY(-64px); }
+  86%, 100% { transform: translateY(0); }
+}
+@keyframes vl-ribbon {
+  0%, 30% { stroke-dashoffset: 1; }
+  52%, 100% { stroke-dashoffset: 0; }
+}
+@keyframes vl-box-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  10%, 94% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+@keyframes vl-step {
+  0% { color: theme('colors.taupe'); }
+  4%, 30% { color: theme('colors.espresso'); }
+  36%, 100% { color: theme('colors.taupe'); }
+}
+@keyframes vl-rule {
+  0% { transform: scaleX(0); }
+  4%, 30% { transform: scaleX(1); }
+  36%, 100% { transform: scaleX(0); }
+}
+.vl-moment { --cycle: 9s; }
+.vl-moment .vl-anim,
+.vl-moment .vl-step-word,
+.vl-moment .vl-step-rule {
+  animation-duration: var(--cycle);
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  animation-fill-mode: both;
+}
+.vl-moment[data-inview] .vl-anim,
+.vl-moment[data-inview] .vl-step-word,
+.vl-moment[data-inview] .vl-step-rule {
+  animation-play-state: running;
+}
+.vl-moment .vl-x { animation-name: vl-travel-x; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+.vl-moment .vl-y { animation-name: vl-travel-y; animation-timing-function: ease-in-out; }
+.vl-moment .vl-ribbon { animation-name: vl-ribbon; stroke-dasharray: 1; animation-timing-function: ease-out; }
+.vl-moment .vl-box { animation-name: vl-box-in; transform-box: fill-box; }
+.vl-moment .vl-step-word { animation-name: vl-step; }
+.vl-moment .vl-step-rule { animation-name: vl-rule; transform-origin: left; }
+.vl-moment .vl-step:nth-child(2) .vl-step-word,
+.vl-moment .vl-step:nth-child(2) .vl-step-rule { animation-delay: calc(var(--cycle) / 3); }
+.vl-moment .vl-step:nth-child(3) .vl-step-word,
+.vl-moment .vl-step:nth-child(3) .vl-step-rule { animation-delay: calc(var(--cycle) * 2 / 3); }
+
+@media (prefers-reduced-motion: reduce) {
+  .vl-moment .vl-anim,
+  .vl-moment .vl-step-word,
+  .vl-moment .vl-step-rule { animation: none !important; }
+  .vl-moment .vl-x { transform: translateX(calc(var(--travel, 360px) / 2)); }
+  .vl-moment .vl-y { transform: translateY(-64px); }
+  .vl-moment .vl-ribbon { stroke-dashoffset: 0; }
+  .vl-moment .vl-step-word { color: theme('colors.espresso'); }
+  .vl-moment .vl-step-rule { transform: scaleX(1); }
+}
