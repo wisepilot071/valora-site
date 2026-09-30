@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { blurFor } from '@/components/ui/SafeImage';
 
 /** Hero image with a gentle desktop-only parallax (disabled for reduced motion). */
 export function HeroImage({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
@@ -45,6 +46,8 @@ export function HeroImage({ src, alt, width, height }: { src: string; alt: strin
         priority
         fetchPriority="high"
         quality={70}
+        placeholder={blurFor(src) ? 'blur' : 'empty'}
+        blurDataURL={blurFor(src)}
         sizes="(min-width: 1440px) 820px, (min-width: 1024px) 58vw, 100vw"
         className="object-cover object-[74%_50%]"
         data-w={width}
