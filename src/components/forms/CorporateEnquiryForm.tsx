@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -44,8 +44,15 @@ export function CorporateEnquiryForm({ hampers }: { hampers: string[] }) {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormInput, unknown, FormValues>({ resolver: zodResolver(schema), shouldFocusError: true, reValidateMode: 'onChange' });
+
+  // Arriving from the homepage studio (?hamper=Name) preselects that hamper.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('hamper');
+    if (wanted && hampers.includes(wanted)) setValue('preferredHamper', wanted);
+  }, [hampers, setValue]);
 
   const onSubmit = (values: FormValues) => {
     const payload = { ...values, quantity: String(values.quantity) };
