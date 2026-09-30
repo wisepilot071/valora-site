@@ -34,6 +34,8 @@ export const homepage = {
       { word: 'Given.', line: 'The part that lasts. We just make sure it arrives right.' },
     ],
     closing: 'A gift is a sentence you don’t have to say out loud.',
+    tag: 'For you',
+    scrollHint: 'Scroll to wrap it',
   },
 
   featured: {
