@@ -107,67 +107,82 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
 
-/* ───── Brand moment: "The passing of a gift" ───── */
-@keyframes vl-travel-x {
-  0%, 62% { transform: translateX(0); }
-  86%, 100% { transform: translateX(var(--travel, 360px)); }
-}
-@keyframes vl-travel-y {
-  0%, 62% { transform: translateY(0); }
-  74% { transform: translateY(-64px); }
-  86%, 100% { transform: translateY(0); }
-}
-@keyframes vl-ribbon {
-  0%, 30% { stroke-dashoffset: 1; }
-  52%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes vl-box-in {
-  0% { opacity: 0; transform: translateY(10px); }
-  10%, 94% { opacity: 1; transform: none; }
-  100% { opacity: 0; }
-}
-@keyframes vl-step {
-  0% { color: theme('colors.taupe'); }
-  4%, 30% { color: theme('colors.espresso'); }
-  36%, 100% { color: theme('colors.taupe'); }
-}
-@keyframes vl-rule {
-  0% { transform: scaleX(0); }
-  4%, 30% { transform: scaleX(1); }
-  36%, 100% { transform: scaleX(0); }
-}
-.vl-moment { --cycle: 9s; }
-.vl-moment .vl-anim,
-.vl-moment .vl-step-word,
-.vl-moment .vl-step-rule {
-  animation-duration: var(--cycle);
-  animation-iteration-count: infinite;
-  animation-play-state: paused;
-  animation-fill-mode: both;
-}
-.vl-moment[data-inview] .vl-anim,
-.vl-moment[data-inview] .vl-step-word,
-.vl-moment[data-inview] .vl-step-rule {
-  animation-play-state: running;
-}
-.vl-moment .vl-x { animation-name: vl-travel-x; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
-.vl-moment .vl-y { animation-name: vl-travel-y; animation-timing-function: ease-in-out; }
-.vl-moment .vl-ribbon { animation-name: vl-ribbon; stroke-dasharray: 1; animation-timing-function: ease-out; }
-.vl-moment .vl-box { animation-name: vl-box-in; transform-box: fill-box; }
-.vl-moment .vl-step-word { animation-name: vl-step; }
-.vl-moment .vl-step-rule { animation-name: vl-rule; transform-origin: left; }
-.vl-moment .vl-step:nth-child(2) .vl-step-word,
-.vl-moment .vl-step:nth-child(2) .vl-step-rule { animation-delay: calc(var(--cycle) / 3); }
-.vl-moment .vl-step:nth-child(3) .vl-step-word,
-.vl-moment .vl-step:nth-child(3) .vl-step-rule { animation-delay: calc(var(--cycle) * 2 / 3); }
+/* ───── Brand moment: "The passing of a gift" (scroll-driven) ─────
+   The section carries --p (0 → 1). Each piece has --a/--b (its slice of the
+   scroll) and derives --t (linear) and --e (eased) from it. */
+.vm { --p: 1; position: relative; }
+.js .vm { --p: 0; height: 320vh; }
+.vm-stage { position: relative; }
+.js .vm-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.vm-stage > .container-site { padding-top: 72px; }
 
+.vm-fade, .vm-shadow, .vm-lift, .vm-drop, .vm-lid, .vm-draw, .vm-pop, .vm-swing, .vm-spark, .vm-closing {
+  --t: clamp(0, calc((var(--p) - var(--a)) / (var(--b) - var(--a))), 1);
+  --e: calc(var(--t) * var(--t) * (3 - 2 * var(--t)));
+}
+.vm-fade { opacity: var(--e); }
+.vm-shadow { transform-box: fill-box; transform-origin: center; transform: scaleX(calc(1 - var(--e) * 0.14)); opacity: calc(0.12 - var(--e) * 0.04); }
+.vm-lift { transform: translateY(calc(var(--e) * -18px)); }
+.vm-drop { transform: translateY(calc((1 - var(--e)) * -330px)); opacity: calc(var(--t) * 4); }
+.vm-lid {
+  transform-box: fill-box; transform-origin: center;
+  transform: translateY(calc((1 - var(--e)) * -200px)) rotate(calc((1 - var(--e)) * -14deg));
+  opacity: calc(var(--t) * 3);
+}
+.vm-draw { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--e)); }
+.vm-pop {
+  transform-box: fill-box; transform-origin: center;
+  transform: scale(calc(var(--e) + sin(calc(var(--t) * 180deg)) * 0.22));
+  opacity: calc(var(--t) * 3);
+}
+.vm-swing {
+  transform-box: view-box; transform-origin: 312px 262px;
+  transform: rotate(calc((1 - var(--e)) * -60deg));
+  opacity: calc(var(--t) * 3);
+}
+.vm-spark { transform-box: fill-box; transform-origin: center; transform: scale(var(--e)); opacity: var(--e); }
+.vm[data-step="3"] .vm-spark path { animation: vm-twinkle 2.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes vm-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.vm-mark { font-family: var(--font-display), Georgia, serif; }
+.vm-tagtext { font-family: var(--font-display), Georgia, serif; font-style: italic; }
+
+.vm-steps { display: grid; gap: 1.25rem; }
+.vm-step { display: grid; grid-template-columns: 2.5rem 1fr; align-items: baseline; }
+.vm-num { font-size: 0.75rem; letter-spacing: 0.14em; color: theme('colors.taupe'); font-variant-numeric: tabular-nums; }
+.vm-word { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.05; color: theme('colors.taupe'); transition: color 400ms ease; }
+.vm-line {
+  color: theme('colors.taupe'); max-width: 24rem; overflow: hidden;
+  max-height: 0; opacity: 0; margin-top: 0;
+  transition: max-height 500ms ease, opacity 400ms ease, margin-top 400ms ease;
+}
+.vm[data-step="1"] .vm-step[data-index="1"] .vm-word,
+.vm[data-step="2"] .vm-step[data-index="2"] .vm-word,
+.vm[data-step="3"] .vm-step[data-index="3"] .vm-word { color: theme('colors.espresso'); }
+.vm[data-step="1"] .vm-step[data-index="1"] .vm-num,
+.vm[data-step="2"] .vm-step[data-index="2"] .vm-num,
+.vm[data-step="3"] .vm-step[data-index="3"] .vm-num { color: theme('colors.clay'); }
+.vm[data-step="1"] .vm-step[data-index="1"] .vm-line,
+.vm[data-step="2"] .vm-step[data-index="2"] .vm-line,
+.vm[data-step="3"] .vm-step[data-index="3"] .vm-line { max-height: 6rem; opacity: 1; margin-top: 0.5rem; }
+
+.vm-rail { height: 2px; max-width: 24rem; background: theme('colors.stone'); }
+.vm-rail-fill { display: block; height: 100%; background: theme('colors.clay'); transform-origin: left; transform: scaleX(var(--p)); }
+.vm-closing { opacity: var(--e); transform: translateY(calc((1 - var(--e)) * 12px)); }
+.vm-hint {
+  position: absolute; left: 50%; bottom: 1.5rem; transform: translateX(-50%);
+  font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: theme('colors.taupe');
+  opacity: clamp(0, calc(1 - var(--p) * 14), 1); pointer-events: none;
+}
+@media (max-width: 1023px) {
+  .vm-steps { gap: 0.5rem; }
+  .vm-word { font-size: 1.75rem; }
+  .vm-closing { font-size: 1.25rem; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .vl-moment .vl-anim,
-  .vl-moment .vl-step-word,
-  .vl-moment .vl-step-rule { animation: none !important; }
-  .vl-moment .vl-x { transform: translateX(calc(var(--travel, 360px) / 2)); }
-  .vl-moment .vl-y { transform: translateY(-64px); }
-  .vl-moment .vl-ribbon { stroke-dashoffset: 0; }
-  .vl-moment .vl-step-word { color: theme('colors.espresso'); }
-  .vl-moment .vl-step-rule { transform: scaleX(1); }
+  .js .vm { --p: 1; height: auto; }
+  .js .vm-stage { position: relative; height: auto; }
+  .vm-line { max-height: none; opacity: 1; margin-top: 0.5rem; }
+  .vm-word { color: theme('colors.espresso'); }
+  .vm-spark path { animation: none !important; }
+  .vm-hint { display: none; }
 }
