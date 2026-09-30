@@ -83,15 +83,56 @@ export const homepage = {
     eyebrow: 'For businesses',
     heading: 'Corporate Gifting, Thoughtfully Done.',
     supporting:
-      'Thoughtful gifting for teams, clients, partners and important business moments. Tell us the occasion — we handle selection, personalisation, packing and delivery.',
-    points: ['Onboarding and welcome kits', 'Client and partner appreciation', 'Festive and year-end gifting', 'Leadership milestones'],
-    cta: { label: 'Enquire for Corporate Gifting', href: '/contact#corporate' },
-    image: {
-      src: '/images/home/corporate.jpg',
-      alt: 'A leather journal, pen case and tumbler on an olive tray beside a gift box banded in floral paper, on an office desk',
-      width: 1672,
-      height: 940,
+      'Pick the occasion and see how it could arrive. We handle selection, personalisation, packing and delivery.',
+    studio: {
+      occasionsLabel: 'Choose an occasion',
+      nameLabel: 'Your company name',
+      namePlaceholder: 'e.g. Acme Studio',
+      signatureFallback: 'Your company',
+      signaturePrefix: 'With gratitude,',
+      cardLabel: 'Printed on handmade paper',
+      viewHamper: 'See this hamper',
     },
+    /** Each occasion shows a hamper photo and a sample note. `product` is a slug from products.ts. */
+    occasions: [
+      {
+        label: 'Onboarding & welcome kits',
+        product: 'evergreen-welcome-box',
+        note: 'Welcome to the team. Here’s to new beginnings and brighter tomorrows.',
+        image: {
+          src: '/images/products/evergreen-welcome-box/evergreen-welcome-box-main.jpg',
+          alt: 'An olive welcome box with a linen notebook, stoneware mug, tea tin and striped towel',
+        },
+      },
+      {
+        label: 'Client & partner appreciation',
+        product: 'the-partnership-box',
+        note: 'Thank you for your continued trust. Here’s to what we build next, together.',
+        image: {
+          src: '/images/products/the-partnership-box/the-partnership-box-main.jpg',
+          alt: 'A client gift box with a bottle of wine, sandalwood candle and leather folio',
+        },
+      },
+      {
+        label: 'Festive & year-end gifting',
+        product: 'the-mulberry-hamper',
+        note: 'Warm wishes for the season, and thank you for a wonderful year.',
+        image: {
+          src: '/images/products/the-mulberry-hamper/the-mulberry-hamper-main.jpg',
+          alt: 'A mulberry festive hamper with a botanical tin, nuts and folded cotton',
+        },
+      },
+      {
+        label: 'Leadership milestones',
+        product: 'the-milestone-box',
+        note: 'In appreciation of your leadership and the lasting impact you’ve made.',
+        image: {
+          src: '/images/products/the-milestone-box/the-milestone-box-main.jpg',
+          alt: 'A charcoal milestone box with a leather journal, bottle, candle and woven stole',
+        },
+      },
+    ],
+    cta: { label: 'Enquire for Corporate Gifting', href: '/contact' },
   },
 
   finalCta: {
